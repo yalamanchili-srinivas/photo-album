@@ -51,7 +51,6 @@ AlbumService.saveAlbum = (req, res) => {
                                     .send(album);
                              });
             });
-
         }
     });
 };
