@@ -28,16 +28,16 @@ AlbumService.saveAlbum = (req, res) => {
 
     fs.stat(albumPath, function(err, stat) {
         if(stat && stat.isDirectory()) {
-            sendFailure(res, 409,
+            return sendFailure(res, 409,
                         {code: "album_already_exists", message: "Album already exists"});
         } else {
             console.log("Album Path: ", albumPath);
             fs.mkdir(albumPath, function(err) {
 
                 if(err) {
-                    sendFailure(res, 500, {
-                        code   : "error_opening_albums",
-                        message: "Error in opening albums"
+                    return sendFailure(res, 500, {
+                        code   : "error_creating_album",
+                        message: "Error in creating album " + err.message
                     });
                 }
             });
