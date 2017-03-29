@@ -29,7 +29,7 @@ AlbumService.saveAlbum = (req, res) => {
     fs.stat(albumPath, function(err, stat) {
         if(stat && stat.isDirectory()) {
             return sendFailure(res, 409,
-                        {code: "album_already_exists", message: "Album already exists"});
+                               {code: "album_already_exists", message: "Album already exists"});
         } else {
             console.log("Album Path: ", albumPath);
             fs.mkdir(albumPath, function(err) {
@@ -40,17 +40,18 @@ AlbumService.saveAlbum = (req, res) => {
                         message: "Error in creating album " + err.message
                     });
                 }
+                Album.create(newAlbum,
+                             function(err, album) {
+                                 if(err) {
+                                     return res.status(500)
+                                               .send(
+                                                   "There was a problem creating a album.");
+                                 }
+                                 res.status(200)
+                                    .send(album);
+                             });
             });
-            Album.create(newAlbum,
-                         function(err, album) {
-                             if(err) {
-                                 return res.status(500)
-                                           .send(
-                                               "There was a problem creating a album.");
-                             }
-                             res.status(200)
-                                .send(album);
-                         });
+
         }
     });
 };
