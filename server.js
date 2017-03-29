@@ -14,5 +14,5 @@ var app = require('./app');
 var port = process.env.PORT || config.port || 9000;
 
 var server = app.listen(port, function() {
-    console.log('Express server listening on port ' + port);
+    console.log(server.address());
 });
