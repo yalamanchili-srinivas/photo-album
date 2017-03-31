@@ -1,4 +1,4 @@
 {
-  "port": 9000,
+  "port": 80,
   "db_url": "mongodb://localhost:27017/photo_app"
 }
