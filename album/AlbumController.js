@@ -25,6 +25,7 @@ router.post('/', function(req, res) {
 //  CREATES A NEW PHOTO in a specific album
 router.post('/:album_name/photos', upload.single('file_to_upload'), function(req, res) {
     AlbumService.savePhoto(req, res);
+    
 });
 
 // RETURNS ALL THE ALBUMS IN THE DATABASE
