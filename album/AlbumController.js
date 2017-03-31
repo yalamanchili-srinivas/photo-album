@@ -15,8 +15,6 @@ router.use(bodyParser.json());
 
 var upload = multer({dest: "uploads/"});
 
-var Album = require('./Album');
-
 var AlbumService = require('./AlbumService');
 
 //  CREATES A NEW ALBUM

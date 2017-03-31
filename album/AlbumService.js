@@ -56,6 +56,7 @@ AlbumService.saveAlbum = (req, res) => {
 };
 
 AlbumService.savePhoto = (req, res) => {
+
     let albumName = req.params.album_name;
     let newPhoto = req.body;
     let fileInfo = req.file;
@@ -142,8 +143,6 @@ AlbumService.getPhotosByAlbum = function(req, res) {
     let albumName = req.params.album_name;
 
     Photo.find({album_name: albumName}, function(err, photos) {
-        console.log('Photos: ' + photos);
-        console.log();
         return res.status(200)
                   .send(photos);
     });
