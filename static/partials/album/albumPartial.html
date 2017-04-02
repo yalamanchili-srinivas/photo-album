@@ -1,0 +1,41 @@
+<a href="#/">Home</a>
+<div>
+   <h3>{{ album.title }}</h3>
+
+   <div class="alert alert-danger" ng-show="load_error_text">{{ load_error_text }}</div>
+
+   <div class="photo thumnail" style="250px; float: left; margin-right: 10px" ng-repeat="photo in photos">
+
+      <div class="album panel panel-default" style="">
+         <div class="panel-heading">
+            <div class="alert alert-danger" ng-show="add_album_error">{{ add_album_error }}</div>
+            <img data-ng-src="{{images[photo.fileName]}}" alt={{photo.description}} width="200 " height="200 " />
+         </div>
+         <div class="description">
+            <p>{{ photo.description }}</p>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div style="clear: left"></div>
+
+<h4> Add New Photo</h4>
+
+<div class="album panel panel-default">
+   <form name="new_photo_form" novalidate>
+      <div class="panel-heading">
+
+         <div class="alert alert-danger" ng-show="new_photo_error">{{ new_photo_error }}</div>
+         <input type="file" file-model="myFile" />
+      </div>
+      <div class="description">
+         <p>
+            <textarea placeholder="Description..." size="20" ng-model="new_photo.description" rows="4" style="width: 100%"></textarea>
+         </p>
+         <p>
+            <button ng-click="uploadImage(new_photo)" type="button" class="btn btn-success">Add New Photo</button>
+         </p>
+      </div>
+   </form>
+</div>
