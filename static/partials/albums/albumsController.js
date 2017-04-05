@@ -2,8 +2,8 @@
 
 angular.module('photoAlbumApp.albums', [])
    .controller('albumsCtrl', ['albumHttpService', '$scope', '$log', '$location', function (albumHttpService, $scope, $log, $location) {
-   $scope.adding_album = {};
-   $scope.add_album_error = "";
+   $scope.new_album = {};
+   $scope.new_album_error = "";
 
    albumHttpService.getAlbums()
       .then(function (response) {
@@ -15,16 +15,21 @@ angular.module('photoAlbumApp.albums', [])
 
    $scope.addAlbum = function (newAlbum) {
 
-      newAlbum.name = (newAlbum.title) ? newAlbum.title.replace(/ /g, '') : "";
+//       $log.info("New Album");
+//       $log.info(newAlbum);
 
-      albumHttpService.addAlbum(newAlbum)
+      newAlbum.name = (newAlbum.name) ? newAlbum.name.replace(/ /g, '') : "";
+
+       albumHttpService.addAlbum(newAlbum)
          .then(function (response) {
-            $scope.adding_album = {};
-            $location.path('/album/' + response.id);
+             $log.info("New Album Saved Response");
+             $log.info(response);
+            $scope.new_album = {};
+            $location.path('/album/' + response.name);
          })
          .catch(function (error) {
             for (var eachTag in error.data.errors) {
-               $scope.add_album_error = eachTag.toUpperCase() + ": " + error.data.errors[eachTag][0].message;
+               $scope.new_album_error = eachTag.toUpperCase() + ": " + error.data.errors[eachTag][0].message;
             }
          });
 

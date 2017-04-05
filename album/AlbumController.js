@@ -24,8 +24,9 @@ router.post('/', function(req, res) {
 
 //  CREATES A NEW PHOTO in a specific album
 router.post('/:album_name/photos', upload.single('file_to_upload'), function(req, res) {
+    console.log("Saving image ");
+
     AlbumService.savePhoto(req, res);
-    
 });
 
 // RETURNS ALL THE ALBUMS IN THE DATABASE
@@ -34,14 +35,24 @@ router.get('/', function(req, res) {
 });
 
 
-// GETS A SINGLE ALBUM FROM THE DATABASE
-router.get('/:album_id', function(req, res) {
-    AlbumService.getAlbumByID(req, res);
+//// GETS A SINGLE ALBUM FROM THE DATABASE
+//router.get('/:album_id', function(req, res) {
+//    AlbumService.getAlbumByID(req, res);
+//});
+
+// GETS A SINGLE ALBUM with album name FROM THE DATABASE
+router.get('/:album_name', function(req, res) {
+    AlbumService.getAlbumByName(req, res);
 });
 
-// GETS A ALL PHOTOS from a specific ALBUM FROM THE DATABASE
+// GETS ALL PHOTOS from a specific ALBUM FROM THE DATABASE
 router.get('/:album_name/photos', function(req, res) {
     AlbumService.getPhotosByAlbum(req, res);
+});
+
+// GETS A PHOTO from a specific ALBUM FROM THE DATABASE
+router.get('/:album_name/photos/:photo_name', function(req, res) {
+    AlbumService.getPhotoFromAlbumByName(req, res);
 });
 
 // DELETES A ALBUM FROM THE DATABASE

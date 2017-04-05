@@ -19,10 +19,11 @@ const ALBUM_DIRECTORY = os.homedir() + SEP + "Photos";
 
 console.log('Album Directory: ', ALBUM_DIRECTORY);
 
-var AlbumService = {};
-
-AlbumService.saveAlbum = (req, res) => {
+var saveAlbum = (req, res) => {
     let newAlbum = req.body;
+
+    console.log("req.body");
+    console.log(req.body);
 
     let albumPath = ALBUM_DIRECTORY + SEP + newAlbum.name;
 
@@ -55,14 +56,16 @@ AlbumService.saveAlbum = (req, res) => {
     });
 };
 
-AlbumService.savePhoto = (req, res) => {
+var savePhoto = (req, res) => {
 
     let albumName = req.params.album_name;
     let newPhoto = req.body;
     let fileInfo = req.file;
     newPhoto.album_name = albumName;
 
-//    console.log(newPhoto);
+    console.log("new photo details");
+    console.log(newPhoto);
+
     console.log("File Info: ", fileInfo);
 
     let albumPath = ALBUM_DIRECTORY + SEP + albumName;
@@ -113,7 +116,7 @@ AlbumService.savePhoto = (req, res) => {
     }
 };
 
-AlbumService.getAlbums = (req, res) => {
+var getAlbums = (req, res) => {
     Album.find({}, function(err, albums) {
         if(err) {
             return res.status(500)
@@ -124,22 +127,39 @@ AlbumService.getAlbums = (req, res) => {
     });
 };
 
-AlbumService.getAlbumByID = function(req, res) {
-    Album.findById(req.params.album_id, function(err, album) {
+//AlbumService.getAlbumByID = (req, res) =>{
+//    Album.findById(req.params.album_id, function(err, album) {
+//        if(err) {
+//            return res.status(500)
+//                      .send("There was a problem finding the album.");
+//        }
+//        if(!album) {
+//            return res.status(404)
+//                      .send("No album with that id found.");
+//        }
+//        res.status(200)
+//           .send(album);
+//    });
+//};
+
+var getAlbumByName = (req, res) => {
+    let albumName = req.params.album_name;
+
+    Album.find({name: albumName}, function(err, album) {
         if(err) {
             return res.status(500)
-                      .send("There was a problem finding the album.");
+                      .send("There was a problem finding the album with name " + albumName);
         }
         if(!album) {
             return res.status(404)
-                      .send("No album with that id found.");
+                      .send("No album with " + albumName + " album found.");
         }
         res.status(200)
            .send(album);
     });
 };
 
-AlbumService.getPhotosByAlbum = function(req, res) {
+var getPhotosByAlbum = (req, res) => {
     let albumName = req.params.album_name;
 
     Photo.find({album_name: albumName}, function(err, photos) {
@@ -148,7 +168,7 @@ AlbumService.getPhotosByAlbum = function(req, res) {
     });
 };
 
-AlbumService.deleteAlbum = function(req, res) {
+var deleteAlbum = (req, res) => {
     Album.findByIdAndRemove(req.params.album_id, function(err, album) {
         if(err) {
             return res.status(500)
@@ -159,7 +179,7 @@ AlbumService.deleteAlbum = function(req, res) {
     });
 };
 
-AlbumService.updateAlbum = function(req, res) {
+var updateAlbum = (req, res) => {
     Album.findByIdAndUpdate(req.params.album_id, req.body, {new: true}, function(err, album) {
         if(err) {
             return res.status(500)
@@ -170,6 +190,52 @@ AlbumService.updateAlbum = function(req, res) {
     });
 };
 
+var getPhotoFromAlbumByName = (req, res) => {
+
+    let albumName = req.params.album_name;
+    let photoName = req.params.photo_name;
+
+    Photo.find({name: photoName, album_name: albumName}, function(err, photo) {
+        if(err) {
+            return res.status(500)
+                      .send(
+                          "There was a problem finding the photo with name " + photoName + ' in ' +
+                          albumName + ' album');
+        }
+        if(!photo) {
+            return res.status(404)
+                      .send("No photo with " + photoName + " found " + " in " + albumName +
+                            " album.");
+        }
+
+        let filename = ALBUM_DIRECTORY + "/" + albumName + "/" + photoName + ".jpeg";
+
+        console.log("filename");
+        console.log(filename);
+
+        var rs = fs.createReadStream(filename);
+        var ct = "image/jpeg";
+
+        res.writeHead(200, {"Content-Type": ct});
+
+        rs.on(
+            "error",
+            (err) => {
+
+                console.log(err);
+                res.writeHead(404, {"Content-Type": "application/json"});
+                var out = {
+                    error  : "not_found",
+                    message: "'" + filename + "' was not found"
+                };
+                res.end(JSON.stringify(out) + "\n");
+            }
+        );
+
+        rs.pipe(res);
+    });
+}
+
 function sendFailure(res, server_code, err) {
     var respMessage = JSON.stringify({
                                          code   : (err.code) ? err.code : err.name,
@@ -179,5 +245,16 @@ function sendFailure(res, server_code, err) {
     res.writeHead(server_code, {"Content-Type": "application/json"});
     res.end(respMessage);
 }
+
+var AlbumService = {
+    'getAlbumByName'         : getAlbumByName,
+    'deleteAlbum'            : deleteAlbum,
+    'getAlbums'              : getAlbums,
+    'getPhotosByAlbum'       : getPhotosByAlbum,
+    'saveAlbum'              : saveAlbum,
+    'savePhoto'              : savePhoto,
+    'updateAlbum'            : updateAlbum,
+    'getPhotoFromAlbumByName': getPhotoFromAlbumByName
+};
 
 module.exports = AlbumService;

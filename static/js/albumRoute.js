@@ -15,7 +15,7 @@ function routes($routeProvider) {
          //controllerAs: 'albums',
          templateUrl: '/partials/albums/albumsPartial.html'
       })
-      .when('/album/:album_id', {
+      .when('/album/:album_name', {
          controller: 'albumCtrl',
          //controllerAs: 'album',
          templateUrl: '/partials/album/albumPartial.html'
