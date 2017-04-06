@@ -2,52 +2,67 @@
 
 angular.module('photoAlbumApp.album', [])
        .controller('albumCtrl',
-                   ['albumHttpService', 'photoHttpService', 'BASE_URL', '$scope', '$routeParams',
+                   ['albumHttpService', 'BASE_URL', '$scope', '$routeParams',
                     '$log', '$location', '$route',
-                    function(albumHttpService, photoHttpService, BASE_URL, $scope, $routeParams,
+                    function(albumHttpService, BASE_URL, $scope, $routeParams,
                              $log, $location, $route) {
 
                         $scope.new_photo_error = "";
 
                         $scope.album = {};
-                        $scope.album.name = $routeParams.album_name;
 
-                        $scope.images = {};
+                        let albumName = $routeParams.album_name;
 
                         $scope.photos = [];
 
+                        albumHttpService.getAlbumByName(albumName)
+                                        .then(function(response) {
+                                            $scope.album = response;
+                                        })
+                                        .catch(function(error) {
+                                            $log.info("Error in getting photos: " + error);
+                                        });
+
+                        albumHttpService.getPhotosByAlbumName(albumName)
+                                        .then(function(response) {
+
+                                            let photos = response;
+
+                                            for(let photo of photos) {
+                                                photo.imageSRC = 'albums/' + photo.album_name +
+                                                                 '/photos/' + photo.name
+                                            }
+                                            $scope.photos = photos;
+
+                                        })
+                                        .catch(function(error) {
+                                            $log.error("Error in getting photos: " + error);
+                                        });
 
                         $scope.uploadImage = function(newPhoto) {
 
-                            var file = $scope.myFile;
-                            let albumName = $scope.album.name;
+                            let file = $scope.myFile;
 
-                            albumHttpService.uploadFileToUrl($scope.album.name, newPhoto, file)
+                            albumHttpService.uploadPhoto(albumName, newPhoto, file)
                                             .then(function(response) {
-                                                $scope.album = {};
-                                                $location.path('/album/' + albumName);
+
+                                                let photo = response;
+
+                                                photo.imageSRC = 'albums/' + photo.album_name +
+                                                                 '/photos/' + photo.name;
+
+                                                $scope.photos.push(photo);
+                                                $scope.myFile = "";
+                                                $scope.uploadImage = "";
+                                                $scope.new_photo_error = "";
+
+//                                                $location.path('/album/' + albumName);
                                                 $route.reload();
                                             })
                                             .catch(function(error) {
-                                                $log.info(JSON.stringify(error));
+                                                $log.error(JSON.stringify(error));
                                                 $scope.new_photo_error = error.data;
                                             });
                         };
 
-                        albumHttpService.getAlbumByName($scope.album.name)
-                                        .then(function(response) {
-                                            $log.info("Album with name: " + $scope.album.name);
-                                            $scope.album = response[0];
-                                        })
-                                        .catch(function(error) {
-                                            $log.info("Error in getting photos: " + error);
-                                        });
-
-                        albumHttpService.getPhotosByAlbumName($scope.album.name)
-                                        .then(function(response) {
-                                            $scope.photos = response;
-                                        })
-                                        .catch(function(error) {
-                                            $log.info("Error in getting photos: " + error);
-                                        });
                     }]);

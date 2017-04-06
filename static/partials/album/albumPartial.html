@@ -9,8 +9,10 @@
         <div class="panel-heading">
             <div class="alert alert-danger" ng-show="add_album_error">{{ add_album_error }}
             </div>
-            <img data-ng-src="{{'albums/'+photo.album_name +'/photos/'+ photo.name}}"
+            <img data-ng-src="{{photo.imageSRC}}"
                  alt={{photo.name}} width="200" height="200"/>
+            <!--<img data-ng-src="{{'albums/'+photo.album_name +'/photos/'+ photo.name}}"-->
+            <!--alt={{photo.name}} width="200" height="200"/>-->
         </div>
         <div class="description">
             <p style="width: 200px;">{{ photo.description }}</p>
