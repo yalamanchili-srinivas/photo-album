@@ -2,4 +2,6 @@
 node_modules
 mongo_data
 uploads
+npm-debug.log
 .DS_Store
+

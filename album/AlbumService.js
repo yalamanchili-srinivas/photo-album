@@ -154,8 +154,10 @@ var getAlbumByName = (req, res) => {
             return res.status(404)
                       .send("No album with " + albumName + " album found.");
         }
+        console.log("Album with name");
+        console.log(album);
         res.status(200)
-           .send(album);
+           .send(album[0]);
     });
 };
 

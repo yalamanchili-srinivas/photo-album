@@ -1,6 +1,6 @@
 'use strict';
 
-
+var morgan = require('morgan');
 var express = require('express');
 var app = express();
 
@@ -8,12 +8,7 @@ var db = require('./db');
 
 var AlbumController = require('./album/AlbumController');
 
-var validator = function(req, res, next) {
-    console.log("Req Url-> " + req.originalUrl);
-    return next();
-};
-
-app.use(validator);
+app.use(morgan('dev'));
 
 app.use(express.static('static'));
 
